@@ -9,21 +9,38 @@ Str = function(x, blame) {
 		throw Error("The value " + x + " is not a String\n" +
 					"Blaming " + blame + extraBlame);
 	}
+	if (typeof x === "object" && unproxy.has(x)) {
+		if (unproxy.get(x).labels.indexOf(blame) === -1) {
+			unproxy.get(x).labels.push(blame);
+		}
+	}
 	return x;
 }
 
 Void = function(x, blame) {
 	if (x == null) {
+		if (typeof x === "object" && unproxy.has(x)) {
+			if (unproxy.get(x).labels.indexOf(blame) === -1) {
+				unproxy.get(x).labels.push(blame);
+			}
+		}
 		return x;
 	}
 	throw Error("The value " + x + " is not null or undefined\nBlaming " + blame);
 }
 
-Any = function(x, blame) { return x; }
+Any = function(x, blame) { 
+	if (typeof x === "object" && unproxy.has(x)) {
+		if (unproxy.get(x).labels.indexOf(blame) === -1) {
+			unproxy.get(x).labels.push(blame);
+		}
+	}
+	return x; 
+}
 
 Dyn = function(x, blame) {
 	var y = {
-		toString: function() {
+		valueOf: function() {
 			return x;
 		}
 	};
